@@ -1,0 +1,8 @@
+{
+  "name": "Khang's English Tutor",
+  "description": "A professional AI tutor specialized in the Hanoi Grade 10 English entrance exam, featuring personalized study sessions, practice tests, and progress tracking.",
+  "requestFramePermissions": [
+    "microphone",
+    "camera"
+  ]
+}
