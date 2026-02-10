@@ -1,8 +1,8 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 
-const API_KEY = process.env.API_KEY || "";
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+// Initialize AI directly with process.env.API_KEY as per guidelines
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const SYSTEM_INSTRUCTION = `
 Bạn là Gia sư Tiếng Anh Chuyên nghiệp luyện thi vào lớp 10 tại Hà Nội. 
@@ -64,7 +64,20 @@ export const generateEmailReport = async (data: {
 };
 
 export const generateFullExam = async () => {
-  const prompt = `Trích xuất 40 câu hỏi luyện thi vào 10 Hà Nội. Question/Options/Answer: ENGLISH. Explanation/Topic: TIẾNG VIỆT.`;
+  const prompt = `Bạn là bộ não điều phối của ứng dụng luyện thi. Hãy thực hiện quy trình tạo đề thi ngẫu nhiên từ ngân hàng câu hỏi tại: https://docs.google.com/spreadsheets/d/1dR_VE7thJzCgKzZtvfVhOBLCBylf5tqD8vhlDdkziE8/edit?gid=0#gid=0
+
+YÊU CẦU CẤU TRÚC (TỔNG 40 CÂU):
+1. Phần 1: Ngữ âm - 4 câu (2 câu phát âm, 2 câu trọng âm).
+2. Phần 2: Ngữ pháp & Từ vựng - 8 câu (các chủ điểm lớp 9-10).
+3. Phần 3: Kỹ năng Đọc - 20 câu (bao gồm: thông báo/biển báo, điền từ vào đoạn văn, đọc hiểu trả lời câu hỏi).
+4. Phần 4: Kỹ năng Viết - 8 câu (viết lại câu, sắp xếp câu, câu chủ đề).
+
+QUY ĐỊNH:
+- Question/Options/Answer: GIỮ NGUYÊN TIẾNG ANH.
+- Explanation/Topic: TIẾNG VIỆT.
+- Sắp xếp theo đúng thứ tự đề thi mẫu Hà Nội 2025. 
+- Không lặp lại câu hỏi.`;
+
   const response = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
     contents: prompt,
@@ -79,9 +92,10 @@ export const generateFullExam = async () => {
             options: { type: Type.ARRAY, items: { type: Type.STRING } },
             correctAnswer: { type: Type.STRING },
             explanation: { type: Type.STRING },
-            topic: { type: Type.STRING }
+            topic: { type: Type.STRING },
+            part: { type: Type.STRING, description: "Tên phần: Ngữ âm, Ngữ pháp & Từ vựng, Kỹ năng Đọc, Kỹ năng Viết" }
           },
-          required: ["question", "options", "correctAnswer", "explanation", "topic"]
+          required: ["question", "options", "correctAnswer", "explanation", "topic", "part"]
         }
       }
     }

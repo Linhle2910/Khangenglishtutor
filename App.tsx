@@ -11,6 +11,15 @@ import { View } from './types';
 const App: React.FC = () => {
   const [activeView, setActiveView] = useState<View>(View.DASHBOARD);
 
+  const menuItems = [
+    { id: View.DASHBOARD, label: 'Bảng tin', icon: '📊' },
+    { id: View.STUDY, label: 'Gia sư', icon: '👨‍🏫' },
+    { id: View.GRAMMAR_VOCAB, label: 'Ngữ pháp', icon: '🧠' },
+    { id: View.READING_WRITING, label: 'Đọc Viết', icon: '✍️' },
+    { id: View.TEST, label: 'Luyện đề', icon: '📝' },
+    { id: View.PROGRESS, label: 'Tiến độ', icon: '📈' },
+  ];
+
   const renderContent = () => {
     switch (activeView) {
       case View.DASHBOARD: return <Dashboard />;
@@ -45,21 +54,47 @@ const App: React.FC = () => {
 
   return (
     <div className="flex min-h-screen bg-slate-50 font-sans antialiased text-slate-900">
+      {/* Sidebar for Desktop */}
       <Sidebar activeView={activeView} onNavigate={setActiveView} />
-      <main className="flex-1 p-4 md:p-10 lg:p-12 overflow-y-auto">
-        <div className="md:hidden flex items-center justify-between mb-8 bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-          <h1 className="text-xl font-black text-blue-700 flex items-center gap-2"><span>🎓</span> Khang</h1>
-          <select value={activeView} onChange={(e) => setActiveView(e.target.value as View)} className="p-2 rounded-xl text-xs font-black bg-slate-50 outline-none ring-2 ring-slate-100">
-            <option value={View.DASHBOARD}>📊 Bảng điều khiển</option>
-            <option value={View.STUDY}>👨‍🏫 Gia sư AI</option>
-            <option value={View.GRAMMAR_VOCAB}>🧠 Ngữ pháp & Từ vựng</option>
-            <option value={View.READING_WRITING}>✍️ Đọc và Viết</option>
-            <option value={View.TEST}>📝 Luyện đề thi</option>
-            <option value={View.PROGRESS}>📈 Tiến độ</option>
-          </select>
+      
+      {/* Main Content Area */}
+      <main className="flex-1 p-4 md:p-10 lg:p-12 overflow-y-auto pb-24 md:pb-10">
+        {/* Mobile Header (Title only) */}
+        <div className="md:hidden flex items-center justify-center mb-8 bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+          <h1 className="text-xl font-black text-blue-700 flex items-center gap-2">
+            <span>🎓</span> Gia Sư Khang
+          </h1>
         </div>
-        <div className="max-w-6xl mx-auto animate-in fade-in duration-500">{renderContent()}</div>
+
+        <div className="max-w-6xl mx-auto animate-in fade-in duration-500">
+          {renderContent()}
+        </div>
       </main>
+
+      {/* Bottom Navigation for Mobile */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t border-slate-100 px-2 py-3 z-50 flex justify-around items-center shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
+        {menuItems.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => setActiveView(item.id)}
+            className={`flex flex-col items-center justify-center gap-1 min-w-[60px] transition-all duration-300 ${
+              activeView === item.id ? 'text-blue-600 scale-110' : 'text-slate-400'
+            }`}
+          >
+            <span className={`text-xl ${activeView === item.id ? 'opacity-100' : 'opacity-60 grayscale'}`}>
+              {item.icon}
+            </span>
+            <span className={`text-[9px] font-black uppercase tracking-tighter ${
+              activeView === item.id ? 'opacity-100' : 'opacity-60'
+            }`}>
+              {item.label}
+            </span>
+            {activeView === item.id && (
+              <span className="w-1 h-1 bg-blue-600 rounded-full mt-0.5 animate-pulse"></span>
+            )}
+          </button>
+        ))}
+      </nav>
     </div>
   );
 };
